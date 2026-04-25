@@ -22,9 +22,20 @@ class RegisterForm extends Model
     {
         return [
             [['full_name', 'login', 'password', 'email', 'phone'], 'required'],
-
             [['full_name', 'login', 'password', 'email', 'phone'], 'string', 'max' => 255],
-            // [['login'], 'unique'],
+            [['password'], 'string', 'min' => 8],
+            [['login'], 'string', 'min' => 6],
+            [['email'], 'email'],
+            // ['login', 'match', 'pattern' => '/^[a-zA-Z0-9]+$/', 'message' => 'логин должен сожержать латиницу и цифры, не менее 6 символов'],
+            ['login', 'match', 'pattern' => '/^[a-z\d]+$/', 'message' => 'логин должен сожержать латиницу и цифры, не менее 6 символов'],
+            
+            ['full_name', 'match', 'pattern' => '/^[а-яё\s]+$/iu', 'message' => 'ФИО должно содержать символы кириллицы и пробелы'],
+
+            ['phone', 'match', 'pattern' => '/^8\([\d]{3}\)[\d]{3}(\-[\d]{2}){2}$/', 'message' => 'телефон (формат: 8(XXX)XXX-XX-XX)'],
+            // 8\([\d{3}]\)[\d]{3}\-[\d]{2}\-[\d]{2}
+
+            // [ 'login', 'match', 'pattern' => '/^[a-z\d]+$/i'],
+            [['login'], 'unique', 'targetClass' => User::class],
         ];
     }
 
@@ -47,7 +58,7 @@ class RegisterForm extends Model
      * @param string $email the target email address
      * @return bool whether the model passes validation
      */
-    public function register(): bool
+    public function register(): User | bool
     {
         if ($this->validate()) {
    	        $user = new User();
@@ -58,10 +69,8 @@ class RegisterForm extends Model
                 VarDumper::dump($user->errors, 10, true);
                 die;
             }
-
-
-            return true;
+           
         }
-        return false;
+        return $user ?? false;
     }
 }

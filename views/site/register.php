@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?= $form->field($model, 'login') ?>
 
-                    <?= $form->field($model, 'password') ?>
+                    <?= $form->field($model, 'password')->passwordInput() ?>
 
                     <?= $form->field($model, 'email') ?>
 
@@ -33,6 +33,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
                     <div class="form-group">
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <?= Html::a('Авторизация', 'login', ['class' => 'align-self-baseline'])?>
+                            
+                </div>
+            </div>
                         <?= Html::submitButton('Зарегистрироваться', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
                     </div>
 
