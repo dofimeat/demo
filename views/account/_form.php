@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\Html;
-use yii\widgets\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\models\Application $model */
@@ -12,20 +12,16 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'date_start')->textInput() ?>
+    <div class="w-50">
+        <?= $form->field($model, 'date_start')->textInput(['type' => 'date']) ?>
+    
+        <?= $form->field($model, 'course_id')->dropDownList($courses, ['prompt' => 'Выберете курс']) ?>
 
-    <?= $form->field($model, 'user_id')->textInput() ?>
+        <?= $form->field($model, 'pay_type_id')->dropDownList($payTypes, ['prompt' => 'Выберете способ оплаты']) ?>
 
-    <?= $form->field($model, 'course_id')->textInput() ?>
-
-    <?= $form->field($model, 'pay_type_id')->textInput() ?>
-
-    <?= $form->field($model, 'status_id')->textInput() ?>
-
-    <?= $form->field($model, 'created_id')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <div class="form-group">
+            <?= Html::submitButton('Отправить', ['class' => 'btn btn-outline-success']) ?>
+        </div>
     </div>
 
     <?php ActiveForm::end(); ?>

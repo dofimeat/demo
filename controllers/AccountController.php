@@ -3,10 +3,15 @@
 namespace app\controllers;
 
 use app\models\Application;
+use app\models\Course;
+use app\models\PayType;
+use app\models\Status;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\VarDumper;
 
 /**
  * AccountController implements the CRUD actions for Application model.
@@ -22,7 +27,7 @@ class AccountController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -30,6 +35,22 @@ class AccountController extends Controller
             ]
         );
     }
+
+    public function beforeAction($action)
+    {
+        // your custom code here, if you want the code to run before action filters,
+        // which are triggered on the [[EVENT_BEFORE_ACTION]] event, e.g. PageCache or AccessControl
+
+        if (!parent::beforeAction($action)) {
+            return false;
+        }
+
+        if (Yii::$app->user->isGuest || Yii::$app->user->identity->isAdmin) {
+            return $this->redirect('/');
+        }
+
+        return true; // or false to not run the action
+}
 
     /**
      * Lists all Application models.
@@ -39,11 +60,13 @@ class AccountController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Application::find(),
-            /*
+            'query' => Application::find()
+            ->where(['user_id' => Yii::$app->user->id]),
+            
             'pagination' => [
-                'pageSize' => 50
+                'pageSize' => 5
             ],
+            /*
             'sort' => [
                 'defaultOrder' => [
                     'id' => SORT_DESC,
@@ -78,10 +101,20 @@ class AccountController extends Controller
     public function actionCreate()
     {
         $model = new Application();
+        $courses = Course::getCourse();
+        $payTypes = PayType::getPayTypes();
+        // VarDumper::dump($courses, 10, true);
+        // die;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post()) ) {
+                $model->user_id = Yii::$app->user->id;
+                $model->status_id = Status::getStatusId('new');
+
+                if ($model->save()) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                } 
+                // return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -89,6 +122,8 @@ class AccountController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'courses' => $courses,
+            'payTypes' => $payTypes,
         ]);
     }
 
