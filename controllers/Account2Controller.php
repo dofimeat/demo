@@ -3,21 +3,16 @@
 namespace app\controllers;
 
 use app\models\Application;
-use app\models\Course;
 use app\models\Feedback;
-use app\models\PayType;
-use app\models\Status;
-use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\helpers\VarDumper;
 
 /**
- * AccountController implements the CRUD actions for Application model.
+ * Account2Controller implements the CRUD actions for Application model.
  */
-class AccountController extends Controller
+class Account2Controller extends Controller
 {
     /**
      * @inheritDoc
@@ -28,7 +23,7 @@ class AccountController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::class,
+                    'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
                     ],
@@ -36,22 +31,6 @@ class AccountController extends Controller
             ]
         );
     }
-
-    public function beforeAction($action)
-    {
-        // your custom code here, if you want the code to run before action filters,
-        // which are triggered on the [[EVENT_BEFORE_ACTION]] event, e.g. PageCache or AccessControl
-
-        if (!parent::beforeAction($action)) {
-            return false;
-        }
-
-        if (Yii::$app->user->isGuest || Yii::$app->user->identity->isAdmin) {
-            return $this->redirect('/');
-        }
-
-        return true; // or false to not run the action
-}
 
     /**
      * Lists all Application models.
@@ -61,13 +40,11 @@ class AccountController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => Application::find()
-            ->where(['user_id' => Yii::$app->user->id]),
-            
-            'pagination' => [
-                'pageSize' => 5
-            ],
+            'query' => Application::find(),
             /*
+            'pagination' => [
+                'pageSize' => 50
+            ],
             'sort' => [
                 'defaultOrder' => [
                     'id' => SORT_DESC,
@@ -83,7 +60,7 @@ class AccountController extends Controller
 
     /**
      * Displays a single Application model.
-     * @param int $id ID
+     * @param int $id №
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -102,20 +79,10 @@ class AccountController extends Controller
     public function actionCreate()
     {
         $model = new Application();
-        $courses = Course::getCourse();
-        $payTypes = PayType::getPayTypes();
-        // VarDumper::dump($courses, 10, true);
-        // die;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) ) {
-                $model->user_id = Yii::$app->user->id;
-                $model->status_id = Status::getStatusId('new');
-
-                if ($model->save()) {
-                    return $this->redirect(['view', 'id' => $model->id]);
-                } 
-                // return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post()) && $model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -123,15 +90,13 @@ class AccountController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'courses' => $courses,
-            'payTypes' => $payTypes,
         ]);
     }
 
     /**
      * Updates an existing Application model.
      * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
+     * @param int $id №
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -152,7 +117,7 @@ class AccountController extends Controller
     /**
      * Deletes an existing Application model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
+     * @param int $id №
      * @return \yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
@@ -166,7 +131,7 @@ class AccountController extends Controller
     /**
      * Finds the Application model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
+     * @param int $id №
      * @return Application the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
