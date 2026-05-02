@@ -22,7 +22,7 @@ use yii\bootstrap5\Html;
   </div>
   <div class="d-flex gap-3 m-3">
     <?= Html::a('Просмотр', ['view', 'id' => $model->id], ['class' => 'btn btn-outline-primary']); ?>
-    <?= $model->status->alias === 'finaly' && !$model?->feedback 
+    <?= $model->status->alias === 'finally' && !$model?->feedback 
         ? Html::a('Отзыв', ['feedback', 'id' => $model->id], ['class' => 'btn btn-outline-warning'])
         : ''
     ?>

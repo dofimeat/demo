@@ -81,7 +81,7 @@ class SiteController extends Controller
             Yii::$app->session->setFlash('susses', 'Вы успешно авторизовались в системе');
             return Yii::$app->user
             ? $this->redirect('/demo/web/account')
-            : $this->goHome();
+            : $this->redirect('/demo/web/admin');
         }
 
         $model->password = '';

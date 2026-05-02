@@ -47,6 +47,14 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             !Yii::$app->user->isGuest && !Yii::$app->user->identity->isAdmin
                 ? ['label' => 'Личный кабинет', 'url' => ['/account']]
                 : '',
+
+            !Yii::$app->user->isGuest && !Yii::$app->user->identity->isAdmin
+                ? ['label' => 'Личный кабинет 2', 'url' => ['/account2']]
+                : '',
+
+            !Yii::$app->user->isGuest && Yii::$app->user->identity?->isAdmin
+                ? ['label' => 'Панель администратора', 'url' => ['/admin']]
+                : '',
             
             Yii::$app->user->isGuest
                 ? ['label' => 'Вход', 'url' => ['/site/login']]
