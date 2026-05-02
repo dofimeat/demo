@@ -3,7 +3,11 @@
 namespace app\controllers;
 
 use app\models\Application;
+use app\models\Course;
 use app\models\Feedback;
+use app\models\PayType;
+use app\models\Status;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -79,10 +83,21 @@ class Account2Controller extends Controller
     public function actionCreate()
     {
         $model = new Application();
+        $courses = Course::getCourse();
+        $payTypes = PayType::getPayTypes();
+        // VarDumper::dump($courses, 10, true);
+        // die;
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post()) ) {
+                $model->user_id = Yii::$app->user->id;
+                $model->status_id = Status::getStatusId('new');
+
+                if ($model->save()) {
+                    Yii:$app->session->setFlash('succes', 'Заявка успешно добавлена');
+                    return $this->redirect(['view', 'id' => $model->id]);
+                } 
+                // return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -90,6 +105,8 @@ class Account2Controller extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'courses' => $courses,
+            'payTypes' => $payTypes,
         ]);
     }
 
@@ -106,6 +123,7 @@ class Account2Controller extends Controller
         $model->application_id = $id;
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+             Yii:$app->session->setFlash('succes', 'Отзыв о курсе успешно добавлен');
             return $this->redirect(['view', 'id' => $model->application_id]);
         }
 
