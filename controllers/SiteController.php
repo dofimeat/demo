@@ -78,6 +78,7 @@ class SiteController extends Controller
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            Yii::$app->session->setFlash('susses', 'Вы успешно авторизовались в системе');
             return Yii::$app->user
             ? $this->redirect('/demo/web/account')
             : $this->goHome();
@@ -97,6 +98,7 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
+        Yii::$app->session->setFlash('susses', 'Вы успешно вышли из системы');
 
         return $this->goHome();
     }
